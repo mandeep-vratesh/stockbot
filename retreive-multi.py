@@ -14,21 +14,50 @@ def f(x):
 		stock_data = nse.get_quote(x)
 	except Exception as e:
 		pass
+	today_date = datetime.today().strftime('%Y-%m-%d')
+
+    data_for_today = {}
+    data_for_today[today_date] = {
+        "open": stock_data["open"],
+        "high": stock_data["dayHigh"],
+        "low" : stock_data["dayLow"],
+        "close": stock_data["closePrice"]
+    }
+
+    min_stock_data[stock_code] = data_for_today
+
+    with open("files/stock_data_min.json", "w") as jsonFile:
+        json.dump(min_stock_data, jsonFile)
 
 
 if __name__ == '__main__':
 	p = Pool(multiprocessing.cpu_count())
 	print("start", datetime.now())
 	p.map(f, list(nse.get_stock_codes().keys()))
-	# p.map(f, ['INFY','TITAN','ARCHIES','TATAINVEST','DIVISLAB','UCOBANK','VASWANI','BAJAJHLDNG','TRIDENT','PFOCUS','RAINBOWPAP','MODIRUBBER','BANARBEADS','GMRINFRA','ZEEL','GVKPIL','BALRAMCHIN','WIPRO','KANANIIND','HTMEDIA','SBIN','MAGNUM','SARDAEN','ZYLOG','JPASSOCIAT','LOTUSEYE','PAGEIND','SOUTHBANK','APLLTD','PTL','FAIRCHEM','NATNLSTEEL','VSTIND','HPL','LAKSHMIEFL','RECLTD','FMGOETZE','KOHINOOR','SHRIRAMEPC','KSBPUMPS','NRAIL','JKLAKSHMI','HEG','IL&FSENGG','BFINVEST','LGBFORGE','TFL','SURANAIND','MAHAPEXLTD','INOXLEISUR','SPLIL','GLOBALVECT','TTL','KRBL','KARURVYSYA','MUTHOOTCAP','GABRIEL','NILKAMAL','WEIZFOREX','ALICON','UJAAS','GULFOILLUB','IVP','GSS','NTPC','HERCULES','ESABINDIA','AXISBANK','ICSA','FCONSUMER','PSB'])
 
 	print("end", datetime.now())
 
 	print("start", datetime.now())
-	# for x in ['INFY','TITAN','ARCHIES','TATAINVEST','DIVISLAB','UCOBANK','VASWANI','BAJAJHLDNG','TRIDENT','PFOCUS','RAINBOWPAP','MODIRUBBER','BANARBEADS','GMRINFRA','ZEEL','GVKPIL','BALRAMCHIN','WIPRO','KANANIIND','HTMEDIA','SBIN','MAGNUM','SARDAEN','ZYLOG','JPASSOCIAT','LOTUSEYE','PAGEIND','SOUTHBANK','APLLTD','PTL','FAIRCHEM','NATNLSTEEL','VSTIND','HPL','LAKSHMIEFL','RECLTD','FMGOETZE','KOHINOOR','SHRIRAMEPC','KSBPUMPS','NRAIL','JKLAKSHMI','HEG','IL&FSENGG','BFINVEST','LGBFORGE','TFL','SURANAIND','MAHAPEXLTD','INOXLEISUR','SPLIL','GLOBALVECT','TTL','KRBL','KARURVYSYA','MUTHOOTCAP','GABRIEL','NILKAMAL','WEIZFOREX','ALICON','UJAAS','GULFOILLUB','IVP','GSS','NTPC','HERCULES','ESABINDIA','AXISBANK','ICSA','FCONSUMER','PSB']:
 	for x in nse.get_stock_codes().keys():
 		try:
 			stock_data = nse.get_quote(x)
 		except Exception as e:
 			pass
+
+		today_date = datetime.today().strftime('%Y-%m-%d')
+
+	    data_for_today = {}
+	    data_for_today[today_date] = {
+	        "open": stock_data["open"],
+	        "high": stock_data["dayHigh"],
+	        "low" : stock_data["dayLow"],
+	        "close": stock_data["closePrice"]
+	    }
+
+	    min_stock_data[stock_code] = data_for_today
+
+	    with open("files/stock_data_min.json", "w") as jsonFile:
+	        json.dump(min_stock_data, jsonFile)
+
+	        
 	print("end", datetime.now())
