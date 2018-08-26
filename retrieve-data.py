@@ -2,100 +2,63 @@
 from nsetools import Nse
 from datetime import datetime
 import json
-import csv
-import pandas
-import time
-from multiprocessing import Process
-from stockstats import StockDataFrame
+from pprint import pprint
 
 #initializations
 nse = Nse()
-sym = 'titan'
-required_quote_info = json.load(open(sym+'.json', 'r'))
+i = 0 
+
+all_stock_codes = nse.get_stock_codes() #1626
+
+with open('files/stock_data_min.json') as f :
+    min_stock_data = json.load(f)
+    # print(json.dumps(min_stock_data, indent=4, sort_keys=True))
+
+# TODO: make this multithreaded
+for stock_code in all_stock_codes : 
+    try:
+        stock_data = nse.get_quote(stock_code)
+    except Exception as e:
+        print(str(e), " for ", stock_code)
+        continue
+    today_date = datetime.today().strftime('%Y-%m-%d')
+
+    data_for_today = {}
+    data_for_today[today_date] = {
+        "open": stock_data["open"],
+        "high": stock_data["dayHigh"],
+        "low" : stock_data["dayLow"],
+        "close": stock_data["closePrice"]
+    }
+
+    min_stock_data[stock_code] = data_for_today
+
+    with open("files/stock_data_min.json", "w") as jsonFile:
+        json.dump(min_stock_data, jsonFile)
+    print("Fetched data for: {0:<20s} |  Competed: {1:3.3f}%".format(stock_code, round(i/len(all_stock_codes)*100,3)))
+    i = i+1
+    
 """
 {
-    "last_price": {
-        "1" : 1029,
-        "2" : 1220
-    }
-}
-{
-    "open": {
-        
-    },
-    "high": {
-        
-    },
-    "low": {
-        
-    },
-    "close": {
-        
-    },
-    "volume": {
-        
+    "TITAN": {
+        "2018-08-26": {
+            "open": 100,
+            "high": 100,
+            "low" : 40,
+            "close": 0
+        },
+        "2018-08-25": {
+            "open": 0,
+            "high": 100,
+            "low" : 40,
+            "close": 100
+        },
+        "2018-08-24": {
+            "open": 100,
+            "high": 150,
+            "low" : 95,
+            "close": 130
+        }
     }
 }
 """
-
-for i in range(2):
-    #get the full quote
-    full_quote = nse.get_quote(sym)
-
-    #strip to the required information
-    required_quote_info['open'][str(datetime.now())] = full_quote['open']
-    required_quote_info['high'][str(datetime.now())] = full_quote['dayHigh']
-    required_quote_info['low'][str(datetime.now())] = full_quote['dayLow']
-    required_quote_info['close'][str(datetime.now())] = full_quote['closePrice']
-    required_quote_info['volume'][str(datetime.now())] = full_quote['totalTradedVolume']
-    
-    print(required_quote_info)
-    #request after every 10secs
-    time.sleep(5)
-
-# def get_data_and_write_to_file():
-#     #get the full quote
-#     full_quote = nse.get_quote(sym)
-
-#     #strip to the required information
-#     required_quote_info['last_price'][str(datetime.now())] = full_quote['lastPrice']
-    
-#     #request after every 10secs
-#     time.sleep(10)
-
-#update the file
-with open(sym+'.json', 'a') as f:
-    json.dump(required_quote_info, f)
-
-
-# #Read CSV File
-# def read_csv(file, json_file, format):
-#     csv_rows = []
-#     with open(file) as csvfile:
-#         reader = csv.DictReader(csvfile)
-#         title = reader.fieldnames
-#         for row in reader:
-#             csv_rows.extend([{title[i]:row[title[i]] for i in range(len(title))}])
-#         write_json(csv_rows, json_file, format)
-
-# #Convert csv data into json and write it
-# def write_json(data, json_file, format):
-#     with open(json_file, "w") as f:
-#         if format == "pretty":
-#             f.write(json.dumps(data, sort_keys=False, indent=4, separators=(',', ': '),ensure_ascii=False))
-#         else:
-#             f.write(json.dumps(data))
-
-# p = pandas.read_json('infy.json')
-# p_historical_json = pandas.read_json('converted.json')
-# p_historical_csv = pandas.read_csv('historical.csv')
-# # print(p_historical)
-# read_csv('historical.csv', 'converted.json', 'pretty')
-# stock = StockDataFrame.retype(p)
-# print(stock['macd'])
-
-# stock_json = StockDataFrame.retype(p_historical_json)
-# stock_csv = StockDataFrame.retype(p_historical_csv)
-# print(stock_json['macd'])
-# print("yolo")
-# print(stock_csv['macd'])
