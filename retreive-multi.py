@@ -15,19 +15,16 @@ def f(x):
 	except Exception as e:
 		pass
 	today_date = datetime.today().strftime('%Y-%m-%d')
-
-    data_for_today = {}
-    data_for_today[today_date] = {
-        "open": stock_data["open"],
-        "high": stock_data["dayHigh"],
-        "low" : stock_data["dayLow"],
-        "close": stock_data["closePrice"]
-    }
-
-    min_stock_data[stock_code] = data_for_today
-
-    with open("files/stock_data_min.json", "w") as jsonFile:
-        json.dump(min_stock_data, jsonFile)
+	data_for_today = {}
+	data_for_today[today_date] = {
+		"open": stock_data["open"],
+		"high": stock_data["dayHigh"],
+		"low" : stock_data["dayLow"],
+		"close": stock_data["closePrice"]
+		}
+	min_stock_data[stock_code] = data_for_today
+	with open("files/stock_data_min.json", "w") as jsonFile:
+	    	json.dump(min_stock_data, jsonFile)
 
 
 if __name__ == '__main__':
@@ -45,19 +42,14 @@ if __name__ == '__main__':
 			pass
 
 		today_date = datetime.today().strftime('%Y-%m-%d')
-
-	    data_for_today = {}
-	    data_for_today[today_date] = {
-	        "open": stock_data["open"],
-	        "high": stock_data["dayHigh"],
-	        "low" : stock_data["dayLow"],
-	        "close": stock_data["closePrice"]
-	    }
-
-	    min_stock_data[stock_code] = data_for_today
-
-	    with open("files/stock_data_min.json", "w") as jsonFile:
-	        json.dump(min_stock_data, jsonFile)
-
-	        
+		data_for_today = {}
+		data_for_today[today_date] = {
+			"open": stock_data["open"],
+			"high": stock_data["dayHigh"],
+			"low" : stock_data["dayLow"],
+			"close": stock_data["closePrice"]
+			}
+		min_stock_data[stock_code] = data_for_today
+		with open("files/stock_data_min.json", "w") as jsonFile:
+    			json.dump(min_stock_data, jsonFile)
 	print("end", datetime.now())
