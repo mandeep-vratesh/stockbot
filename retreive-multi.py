@@ -17,9 +17,8 @@ with open('files/stock_data_min.json') as f :
 def f(stock_code):
 	global i
 	global min_stock_data
-	
 	try:
-		min_stock_data[stock_code][""]
+		min_stock_data[stock_code]
 	except Exception as e:
 		min_stock_data[stock_code] = {}
 		
@@ -29,7 +28,6 @@ def f(stock_code):
 		pass
 	else:
 		today_date = datetime.today().strftime('%Y-%m-%d')
-		data_for_today = {}
 		data_for_today = {
 			"open": stock_data["open"],
 			"high": stock_data["dayHigh"],
@@ -39,9 +37,25 @@ def f(stock_code):
 		min_stock_data[stock_code][today_date] = data_for_today
 		with open("files/stock_data_min.json", "w") as jsonFile:
 		    json.dump(min_stock_data, jsonFile)
-		print("Fetched data for: {0:<20s} |  Competed: {1:3.3f}%".format(stock_code, round(i/len(all_stock_codes)*100,3)))
+		print("Fetched data for: {0:<20s} |  Competed: {1:3.3f}% | {2}".format(stock_code, round(i/len(all_stock_codes)*100,3), str(multiprocessing.current_process())))
 		i = i+1
 
 if __name__ == '__main__':
+	# analytics = {}
+	today_date = datetime.today().strftime('%Y-%m-%d')
+
+	checkpoint1 = datetime.now()
 	p = Pool(multiprocessing.cpu_count())
 	p.map(f, list(nse.get_stock_codes().keys()))
+	# p.map(f, ['CENTRALBK'])
+	checkpoint2 = datetime.now()
+
+	difference = checkpoint2 - checkpoint1
+
+	with open('files/status.json') as f:
+		analytics = json.load(f)
+
+	analytics[today_date] = str(difference)
+
+	with open('files/status.json', 'w') as jsonFile:
+		json.dump(analytics, jsonFile)
