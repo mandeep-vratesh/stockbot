@@ -2,6 +2,7 @@ from nsetools import Nse
 import json
 from pprint import pprint
 from datetime import datetime, timedelta
+import urllib
 
 """
 Given:
@@ -89,6 +90,7 @@ class Single:
         the next trading day.
         """
         lastDay = self.getLast(1, stock)[0]    # [(open, high, low, close),(open, high, low, close),(open, h....
+        # TODO: check if any value is negative in ohlc, then print not enough data
         if (2*abs(self.getBodyHeight(lastDay)) <= abs(self.getBottomShadowHeight(lastDay))) :
             print(stock,": hammer") 
         else:
@@ -210,16 +212,14 @@ if __name__ == "__main__" :
 
     #instantiating NSE
     nse = Nse()
-
-    all_stock_codes = nse.get_stock_codes()
+    try:
+        all_stock_codes = nse.get_stock_codes()
+    except urllib.error.URLError as e:
+        all_stock_codes = {}
+    except Exception as e:
+        print(str(e))
+        
     for stock_code in all_stock_codes.keys() :
         sin.hammer(stock=stock_code)
 
-    # sin.hammer(stock='TATAINVEST')
-
-
-    # "high": 2.5"open": 2.5
-    # ~1.5
-    # "close": 2.35
-    # ~2.0
-    # "low": 2.15
+    sin.hammer(stock='TATAINVEST')
