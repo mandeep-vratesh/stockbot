@@ -24,13 +24,13 @@ def f(stock_code):
 	else:
 		today_date = datetime.today().strftime('%Y-%m-%d')
 		data_for_today = {}
-		data_for_today[today_date] = {
+		data_for_today = {
 			"open": stock_data["open"],
 			"high": stock_data["dayHigh"],
 			"low" : stock_data["dayLow"],
 			"close": stock_data["closePrice"]
 			}
-		min_stock_data[stock_code] = data_for_today
+		min_stock_data[stock_code][today_date] = data_for_today
 		with open("files/stock_data_min.json", "w") as jsonFile:
 		    json.dump(min_stock_data, jsonFile)
 		print("Fetched data for: {0:<20s} |  Competed: {1:3.3f}%".format(stock_code, round(i/len(all_stock_codes)*100,3)))
