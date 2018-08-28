@@ -35,9 +35,9 @@ def f(stock_code):
 			"close": stock_data["closePrice"]
 			}
 		min_stock_data[stock_code][today_date] = data_for_today
-		with open("files/stock_data_min.json", "w") as jsonFile:
-		    json.dump(min_stock_data, jsonFile)
-		print("Fetched data for: {0:<20s} |  Competed: {1:3.3f}% | {2}".format(stock_code, round(i/len(all_stock_codes)*100,3), str(multiprocessing.current_process())))
+		# with open("files/stock_data_min.json", "w") as jsonFile:
+		#     json.dump(min_stock_data, jsonFile)
+		print("Fetched data for: {0:<20s} |  Competed: {3} or {1:3.3f}% | {2}".format(stock_code, round(i/len(all_stock_codes)*100,3), str(multiprocessing.current_process()), i))
 		i = i+1
 
 if __name__ == '__main__':
@@ -45,9 +45,12 @@ if __name__ == '__main__':
 	today_date = datetime.today().strftime('%Y-%m-%d')
 
 	checkpoint1 = datetime.now()
-	p = Pool(multiprocessing.cpu_count())
+	# p = Pool(multiprocessing.cpu_count())
+	p = Pool(64)
 	p.map(f, list(nse.get_stock_codes().keys()))
 	# p.map(f, ['CENTRALBK'])
+	with open("files/stock_data_min2.json", "w") as jsonFile:
+		    json.dump(min_stock_data, jsonFile)
 	checkpoint2 = datetime.now()
 
 	difference = checkpoint2 - checkpoint1
@@ -55,7 +58,7 @@ if __name__ == '__main__':
 	with open('files/status.json') as f:
 		analytics = json.load(f)
 
-	analytics[today_date] = str(difference)
+	analytics[today_date+"_64"] = str(difference)
 
 	with open('files/status.json', 'w') as jsonFile:
 		json.dump(analytics, jsonFile)
